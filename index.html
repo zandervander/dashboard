@@ -39,10 +39,8 @@
         if (transcriptUrl) {
             transcriptUrl = decodeURIComponent(transcriptUrl);
 
-            if (transcriptUrl.includes('transcripts.botghost.com')) {
-                iframe.src = transcripts.botghost.com/view/transcriptUrl;
-            } else {
-                document.body.innerHTML = "<h2 class='error-message'>Error: Invalid transcript source.</h2>";
+            iframe.src = transcripts.botghost.com/view/transcriptUrl;
+
             }
         } else {
             document.body.innerHTML = "<h2 class='error-message'>Error: 404. That transcript either no longer exists or never did.</h2>";
