@@ -38,10 +38,7 @@
 
         if (transcriptUrl) {
             transcriptUrl = decodeURIComponent(transcriptUrl);
-
             iframe.src = 'https://transcripts.botghost.com/view/' + transcriptUrl;
-
-            }
         } else {
             document.body.innerHTML = "<h2 class='error-message'>Error: 404. That transcript either no longer exists or never did.</h2>";
         }
