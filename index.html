@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ticket Transcript Viewer</title>
     <style>
-        /* Forces the iFrame to take up the entire browser window */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #111214; /* Dark Discord-like background */
+            background-color: #111214; 
         }
         iframe {
             width: 100%;
@@ -29,24 +28,18 @@
 </head>
 <body>
 
-    <!-- The container where the BotGhost transcript will load -->
     <iframe id="transcript-frame" src="" sandbox="allow-scripts allow-same-origin"></iframe>
 
     <script>
-        // 1. Grab the URL query parameters
         const urlParams = new URLSearchParams(window.location.search);
         let transcriptUrl = urlParams.get('transcript');
 
-        // 2. Locate the iframe element
         const iframe = document.getElementById('transcript-frame');
 
         if (transcriptUrl) {
-            // Decodes the URL parameter in case it was url-encoded
             transcriptUrl = decodeURIComponent(transcriptUrl);
 
-            // Optional: Validates that the link is actually a BotGhost transcript for security
-            if (transcriptUrl.includes('botghost.com')) {
-                // Sets the iframe destination to the transcript link
+            if (transcriptUrl.includes('transcripts.botghost.com')) {
                 iframe.src = transcriptUrl;
             } else {
                 document.body.innerHTML = "<h2 class='error-message'>Error: Invalid transcript source.</h2>";
