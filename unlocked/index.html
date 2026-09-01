@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Transcript Viewer</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #111214; 
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .error-message {
+            color: #ff4747;
+            font-family: sans-serif;
+            text-align: center;
+            margin-top: 20%;
+        }
+    </style>
+</head>
+<body>
+
+    <iframe id="transcript-frame" src="" sandbox="allow-scripts allow-same-origin"></iframe>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let transcriptUrl = urlParams.get('transcript');
+
+        const iframe = document.getElementById('transcript-frame');
+
+        if (transcriptUrl) {
+            transcriptUrl = decodeURIComponent(transcriptUrl);
+
+            if (transcriptUrl.includes('.net')) {
+                iframe.src = transcriptUrl;
+            } else {
+                document.body.innerHTML = "<h2 class='error-message'>Error: Invalid transcript source.</h2>";
+            }
+        } else {
+            document.body.innerHTML = "<h2 class='error-message'>Error: 404. That transcript either no longer exists or never did.</h2>";
+        }
+    </script>
+</body>
+</html>
