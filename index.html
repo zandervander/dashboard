@@ -40,7 +40,7 @@
             transcriptUrl = decodeURIComponent(transcriptUrl);
             iframe.src = 'https://transcripts.botghost.com/view/' + transcriptUrl;
         } else {
-            document.body.innerHTML = "<h2 class='error-message'>Error: 404. That transcript either no longer exists or never did.</h2>";
+            document.body.innerHTML = "<h2 class='error-message'>Use /viewtranscripts in discord to find transcript IDs. This message appeared because no transcript ID was recieved or the one recieved was invalid.</h2>";
         }
     </script>
 </body>
