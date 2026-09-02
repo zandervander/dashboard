@@ -52,7 +52,7 @@
             gap: 10px;
             margin-top: 20px;
         }
-        #transcriptInput {
+        #transcriptInput, #passwordInput {
             flex: 1;
             padding: 10px 12px;
             background-color: #2c2f33;
@@ -62,11 +62,11 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
             font-size: 14px;
         }
-        #transcriptInput:focus {
+        #transcriptInput:focus, #passwordInput:focus {
             outline: none;
             border-color: #5865f2;
         }
-        #submitBtn {
+        #submitBtn, #passwordBtn {
             padding: 10px 20px;
             background-color: #5865f2;
             color: #ffffff;
@@ -77,10 +77,10 @@
             font-size: 14px;
             font-weight: 500;
         }
-        #submitBtn:hover {
+        #submitBtn:hover, #passwordBtn:hover {
             background-color: #4752c4;
         }
-        #submitBtn:active {
+        #submitBtn:active, #passwordBtn:active {
             background-color: #3c45a5;
         }
         .back-button {
@@ -108,6 +108,16 @@
         .back-button.show {
             display: block;
         }
+        .password-error {
+            color: #ed4245;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+        .password-error.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -116,42 +126,44 @@
     <iframe id="transcript-frame" src="" sandbox="allow-scripts allow-same-origin"></iframe>
 
     <script>
+        // Change this password to your desired password
+        const PASSWORD = 'password123';
+
         const urlParams = new URLSearchParams(window.location.search);
         let transcriptUrl = urlParams.get('transcript');
+        const isAuthenticated = sessionStorage.getItem('transcriptViewerAuth') === 'true';
 
         const iframe = document.getElementById('transcript-frame');
         const backBtn = document.getElementById('backBtn');
 
-        if (transcriptUrl) {
-            transcriptUrl = decodeURIComponent(transcriptUrl);
-            iframe.src = 'https://transcripts.botghost.com/view/' + transcriptUrl;
-            backBtn.classList.add('show');
-            
-            backBtn.addEventListener('click', () => {
-                window.location.href = window.location.pathname;
-            });
-        } else {
+        function showPasswordPrompt() {
             const errorContainer = document.createElement('div');
             errorContainer.className = 'error-container';
             errorContainer.innerHTML = `
                 <div class="error-box">
-                    <h2 class="error-message">No Transcript Found</h2>
-                    <p class="error-subtext">Enter a transcript ID to view it</p>
+                    <h2 class="error-message">Authentication Required</h2>
+                    <p class="error-subtext">Enter the password to access transcripts</p>
                     <div class="input-group">
-                        <input type="text" id="transcriptInput" placeholder="Paste transcript ID here..." />
-                        <button id="submitBtn">View</button>
+                        <input type="password" id="passwordInput" placeholder="Enter password..." />
+                        <button id="passwordBtn">Access</button>
                     </div>
+                    <div class="password-error" id="passwordError">Invalid password</div>
                 </div>
             `;
             document.body.appendChild(errorContainer);
 
-            const input = document.getElementById('transcriptInput');
-            const submitBtn = document.getElementById('submitBtn');
+            const input = document.getElementById('passwordInput');
+            const submitBtn = document.getElementById('passwordBtn');
+            const errorDiv = document.getElementById('passwordError');
 
             const handleSubmit = () => {
-                const id = input.value.trim();
-                if (id) {
-                    window.location.href = '?transcript=' + encodeURIComponent(id);
+                if (input.value === PASSWORD) {
+                    sessionStorage.setItem('transcriptViewerAuth', 'true');
+                    window.location.reload();
+                } else {
+                    errorDiv.classList.add('show');
+                    input.value = '';
+                    input.focus();
                 }
             };
 
@@ -163,6 +175,58 @@
             });
 
             input.focus();
+        }
+
+        function showTranscriptViewer() {
+            if (transcriptUrl) {
+                transcriptUrl = decodeURIComponent(transcriptUrl);
+                iframe.src = 'https://transcripts.botghost.com/view/' + transcriptUrl;
+                backBtn.classList.add('show');
+                
+                backBtn.addEventListener('click', () => {
+                    window.location.href = window.location.pathname;
+                });
+            } else {
+                const errorContainer = document.createElement('div');
+                errorContainer.className = 'error-container';
+                errorContainer.innerHTML = `
+                    <div class="error-box">
+                        <h2 class="error-message">No Transcript Found</h2>
+                        <p class="error-subtext">Enter a transcript ID to view it</p>
+                        <div class="input-group">
+                            <input type="text" id="transcriptInput" placeholder="Paste transcript ID here..." />
+                            <button id="submitBtn">View</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(errorContainer);
+
+                const input = document.getElementById('transcriptInput');
+                const submitBtn = document.getElementById('submitBtn');
+
+                const handleSubmit = () => {
+                    const id = input.value.trim();
+                    if (id) {
+                        window.location.href = '?transcript=' + encodeURIComponent(id);
+                    }
+                };
+
+                submitBtn.addEventListener('click', handleSubmit);
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        handleSubmit();
+                    }
+                });
+
+                input.focus();
+            }
+        }
+
+        // Check authentication on page load
+        if (isAuthenticated) {
+            showTranscriptViewer();
+        } else {
+            showPasswordPrompt();
         }
     </script>
 </body>
