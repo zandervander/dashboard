@@ -126,8 +126,13 @@
     <iframe id="transcript-frame" src="" sandbox="allow-scripts allow-same-origin"></iframe>
 
     <script>
+        // ===== CONFIGURATION =====
+        // Set to false to disable password protection
+        const REQUIRE_PASSWORD = true;
+        
         // Change this password to your desired password
         const PASSWORD = 'SLRP56hh3b88TRANSCRIPTS884H324GVhg873HaSJ88FOR88j-9.1.26';
+        // ===== END CONFIGURATION =====
 
         const urlParams = new URLSearchParams(window.location.search);
         let transcriptUrl = urlParams.get('transcript');
@@ -223,10 +228,15 @@
         }
 
         // Check authentication on page load
-        if (isAuthenticated) {
-            showTranscriptViewer();
+        if (REQUIRE_PASSWORD) {
+            if (isAuthenticated) {
+                showTranscriptViewer();
+            } else {
+                showPasswordPrompt();
+            }
         } else {
-            showPasswordPrompt();
+            // Password protection disabled - show transcript viewer directly
+            showTranscriptViewer();
         }
     </script>
 </body>
